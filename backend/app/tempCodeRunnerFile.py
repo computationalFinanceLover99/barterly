@@ -1,0 +1,1 @@
+print(DATABASE_URL)
