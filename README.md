@@ -162,10 +162,9 @@ docker exec -it sql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "YourPassw
 |--------|----------|-------------|
 | POST | `/auth/register` | Register new student |
 | POST | `/auth/login` | Login and get JWT token |
-| GET | `/profile/me` | Get logged in user profile |
-| PUT | `/profile/me` | Update profile and skills |
-| GET | `/users` | Browse all students |
-| GET | `/users?search=keyword` | Search students |
-| GET | `/users/{id}` | Get a specific student profile |
+| GET | `/profile` | Get logged in user profile |
+| PUT | `/profile` | Update profile and skills |
+| GET | `/browse` | Browse all students |
+
 
 
