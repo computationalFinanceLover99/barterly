@@ -84,7 +84,7 @@ barterly/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/barterly.git
+git clone https://github.com/computationalFinanceLover99/barterly.git
 cd barterly
 ```
 
