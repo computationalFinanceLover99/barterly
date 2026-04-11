@@ -1,4 +1,6 @@
 -- barterly Database Schema for Azure SQL Edge / SQL Server
+use barterly;
+go
 
 CREATE TABLE users (
     id            INT IDENTITY(1,1) PRIMARY KEY,
@@ -55,17 +57,23 @@ CREATE TABLE reviews (
     comment             NVARCHAR(MAX) DEFAULT '',
     created_at          DATETIME2 DEFAULT GETDATE()
 );
-```
 
----
-
-## 5. Connect in VS Code SQLTools
-
-Use these settings:
-```
-Driver:    MSSQL
-Host:      localhost
-Port:      1433
-Database:  master
-Username:  sa
-Password:  RandomPassword110
+-- Sprint 2 additions — run in SQLTools connected to barterly database
+ 
+CREATE TABLE credit_transactions (
+    id         INT IDENTITY(1,1) PRIMARY KEY,
+    user_id    INT NOT NULL REFERENCES users(id),
+    session_id INT REFERENCES sessions(id),
+    amount     INT NOT NULL,
+    type       NVARCHAR(10) NOT NULL,  -- 'earn' or 'spend'
+    note       NVARCHAR(255),
+    created_at DATETIME2 DEFAULT GETDATE()
+);
+ 
+CREATE TABLE match_scores (
+    id             INT IDENTITY(1,1) PRIMARY KEY,
+    student_a_id   INT NOT NULL REFERENCES users(id),
+    student_b_id   INT NOT NULL REFERENCES users(id),
+    score          FLOAT NOT NULL,
+    calculated_at  DATETIME2 DEFAULT GETDATE()
+);    

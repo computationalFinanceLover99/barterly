@@ -25,13 +25,23 @@
 
 ---
 
-## Features (Sprint 1)
+## Features
 
-- User Registration with university email
-- User Login with JWT token authentication
+### Sprint 1 — User Auth & Skill Discovery
+- User registration with university email
+- Secure login with JWT token authentication
 - Profile setup — bio, year, skills offered, skills sought
 - Browse all registered students
 - Search students by name, skill, or university
+
+### Sprint 2 — Matching, Booking & Credits
+- AI-based smart matching — students ranked by skill compatibility score
+- Session booking — 4-step flow: select student, skill, duration, date/time
+- View and cancel upcoming sessions
+- Mark sessions as complete (tutor side)
+- Credit wallet — view balance and full transaction history
+- Credit enforcement — cannot book without sufficient credits
+- Auto credit deduction on booking, refund on cancel, earn on completion
 
 ---
 
@@ -41,30 +51,36 @@
 barterly/
 ├── backend/
 │   ├── app/
-│   │   ├── main.py          # FastAPI routes
+│   │   ├── main.py          # FastAPI routes (auth, profile, matching, sessions, credits)
 │   │   ├── auth.py          # JWT + bcrypt authentication
 │   │   ├── database.py      # Azure SQL Edge connection
 │   │   ├── models.py        # SQLAlchemy models
 │   │   └── __init__.py
-│   ├── requirements.txt     # Python dependencies
-│   └── .env.example         # Environment variables template
+│   ├── requirements.txt
+│   └── .env.example
 ├── frontend/
 │   ├── src/
 │   │   ├── pages/
 │   │   │   ├── Login.jsx
 │   │   │   ├── Register.jsx
 │   │   │   ├── profile.jsx
-│   │   │   └── Browse.jsx
+│   │   │   ├── Browse.jsx
+│   │   │   ├── Matches.jsx
+│   │   │   ├── Booking.jsx
+│   │   │   ├── Sessions.jsx
+│   │   │   └── Credits.jsx
 │   │   ├── App.jsx
 │   │   └── main.jsx
 │   ├── index.html
 │   ├── vite.config.js
 │   └── package.json
 ├── database/
-│   ├── schema.sql           # CREATE TABLE statements
-│   └── seed.sql             # Sample data
+│   ├── schema.sql
+│   ├── schema_sprint2.sql
+│   └── seed.sql
 ├── docs/
 │   ├── Iteration_1.docx
+│   ├── Iteration_2.docx
 │   └── api-docs.md
 └── README.md
 ```
@@ -83,37 +99,23 @@ barterly/
 
 ### Step 1 — Start the Database
 
-Make sure Docker is running, then start the SQL container:
-
 ```bash
 docker start sql
 ```
 
-### Step 2 — Backend Setup
+### Step 2 — Backend
 
 ```bash
 cd backend
-
-# Create and activate virtual environment
-python3 -m venv venv
 source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Set up environment variables
-cp .env.example .env
-# Edit .env and fill in your sa password and JWT secret
-
-# Run the backend
 uvicorn app.main:app --reload
 ```
 
 Backend runs at: `http://localhost:8000`
 
-API docs available at: `http://localhost:8000/docs`
+API docs: `http://localhost:8000/docs`
 
-### Step 3 — Frontend Setup
+### Step 3 — Frontend
 
 Open a new terminal:
 
@@ -127,9 +129,24 @@ Frontend runs at: `http://localhost:5173`
 
 ---
 
+## Pages
+
+| URL | Description |
+|-----|-------------|
+| `/login` | Login page |
+| `/register` | Register new account |
+| `/profile` | View and edit your profile |
+| `/browse` | Browse and search all students |
+| `/matches` | AI-matched student recommendations |
+| `/booking` | Book a session (4-step flow) |
+| `/sessions` | View, cancel, complete sessions |
+| `/credits` | Credit balance and transaction history |
+
+---
+
 ## Environment Variables
 
-Copy `.env.example` to `.env` and fill in your values:
+Copy `.env.example` to `.env`:
 
 ```
 DATABASE_URL=mssql+pyodbc://sa:YourPassword@localhost:1433/barterly?driver=ODBC+Driver+18+for+SQL+Server&TrustServerCertificate=yes
@@ -138,21 +155,7 @@ JWT_ALGORITHM=HS256
 JWT_EXPIRE_MINUTES=1440
 ```
 
-> Never commit your `.env` file. It is listed in `.gitignore`.
-
----
-
-## Database Setup
-
-Once the Docker container is running, create the database and tables:
-
-```bash
-# Create the barterly database
-docker exec -it sql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "YourPassword" -Q "CREATE DATABASE barterly"
-
-# Tables are created automatically when the backend starts
-# To load sample data run database/seed.sql via SQLTools in VS Code
-```
+> Never commit your `.env` file. It is in `.gitignore`.
 
 ---
 
@@ -162,9 +165,14 @@ docker exec -it sql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "YourPassw
 |--------|----------|-------------|
 | POST | `/auth/register` | Register new student |
 | POST | `/auth/login` | Login and get JWT token |
-| GET | `/profile` | Get logged in user profile |
-| PUT | `/profile` | Update profile and skills |
-| GET | `/browse` | Browse all students |
-
-
-
+| GET | `/profile/me` | Get my profile |
+| PUT | `/profile/me` | Update profile and skills |
+| GET | `/users` | Browse all students |
+| GET | `/users?search=keyword` | Search students |
+| GET | `/users/{id}` | Get specific student profile |
+| GET | `/matches` | Get AI-matched recommendations |
+| POST | `/sessions` | Book a session |
+| GET | `/sessions` | Get my sessions |
+| PUT | `/sessions/{id}/cancel` | Cancel a session |
+| PUT | `/sessions/{id}/complete` | Mark session as complete |
+| GET | `/credits` | Get credit balance and history |
